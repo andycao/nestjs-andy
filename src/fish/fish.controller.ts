@@ -8,20 +8,11 @@ import {
   UseInterceptors,
   UploadedFile,
   UploadedFiles,
-  ParseFilePipe,
-  MaxFileSizeValidator,
-  FileTypeValidator,
 } from '@nestjs/common';
-import {
-  FileInterceptor,
-  FileFieldsInterceptor,
-  FilesInterceptor,
-  AnyFilesInterceptor,
-} from '@nestjs/platform-express';
+import { FileInterceptor, AnyFilesInterceptor } from '@nestjs/platform-express';
 
 import {
   ApiBearerAuth,
-  ApiOperation,
   ApiResponse,
   ApiTags,
   ApiParam,
