@@ -21,6 +21,8 @@ import {
 } from '@nestjs/swagger';
 import { Express } from 'express';
 
+const fishs = require('./fishs.json');
+
 export class CreateFishDto {
   @ApiProperty({
     description: 'fish name',
@@ -44,7 +46,7 @@ export class FishController {
   })
   list(@Query() query): any {
     console.log(query);
-    return [{ name: 'fish1', age: 1, ...query }];
+    return fishs;
   }
 
   @Get('detail/:id')
@@ -75,7 +77,7 @@ export class FishController {
         reject({
           error: 'cuo wu',
         });
-      }, 500);
+      }, 1000);
     });
     return promise;
   }
