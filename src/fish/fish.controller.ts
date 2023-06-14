@@ -8,6 +8,11 @@ import {
   UseInterceptors,
   UploadedFile,
   UploadedFiles,
+  Delete,
+  All,
+  Headers,
+  Put,
+  Redirect,
 } from '@nestjs/common';
 import { FileInterceptor, AnyFilesInterceptor } from '@nestjs/platform-express';
 
@@ -18,6 +23,7 @@ import {
   ApiParam,
   ApiQuery,
   ApiProperty,
+  ApiHeader,
 } from '@nestjs/swagger';
 import { Express } from 'express';
 
@@ -36,7 +42,10 @@ export class CreateFishDto {
 
 @ApiBearerAuth()
 @ApiTags('fish')
-@Controller('fish')
+@Controller({
+  path: 'fish',
+  host: 'localhost',
+})
 export class FishController {
   @Get()
   @ApiResponse({
@@ -49,22 +58,23 @@ export class FishController {
     return fishs;
   }
 
-  @Get('detail/:id')
+  @All('detail/:id')
   @ApiParam({
     name: 'id',
     description: 'fish id to search',
-    allowEmptyValue: false,
-  })
-  @ApiQuery({
-    name: 'age',
     allowEmptyValue: false,
   })
   @ApiResponse({
     status: 200,
     type: CreateFishDto,
   })
-  async detail(@Param() params) {
-    console.log(params);
+  @ApiHeader({
+    name: 'test-header',
+  })
+  async detail(@Param() params, @Headers() headers) {
+    const name = headers['test-header'];
+    console.log(params, name);
+
     const promise = new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve({
@@ -86,7 +96,11 @@ export class FishController {
   @Post('create')
   @ApiResponse({
     status: 201,
+    type: 'created',
     description: 'The record has been successfully created.',
+  })
+  @ApiHeader({
+    name: 'test-header',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   create(@Body() createCatDto: CreateFishDto) {
@@ -125,5 +139,41 @@ export class FishController {
         ...body,
       },
     };
+  }
+
+  @Delete('delete')
+  delete() {
+    return {
+      code: 0,
+      message: 'success',
+    };
+  }
+
+  @Put('put')
+  update() {
+    return {
+      code: 0,
+      message: 'success',
+    };
+  }
+
+  @Get('jump')
+  @Redirect('https://nestjs.com')
+  jumpToNest() {
+    return {
+      // return 的参数 override redirect 装饰器
+      url: 'https://baidu.com',
+    };
+  }
+  @Get('asyncGet')
+  async findFish(): Promise<any> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          name: 'fish1',
+          age: Math.random(),
+        });
+      }, 500);
+    });
   }
 }
